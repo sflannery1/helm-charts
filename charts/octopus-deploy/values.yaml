@@ -1,15 +1,17 @@
 octopus:
   # Must be set to "Y" (including the quotes) to accept the EULA at https://octopus.com/legal/customer-agreement
   acceptEula: "N"
+  # Use external secrets? It must be named octopus-deploy-secrets.
+  externalSecrets: true
   # The master key is used to encrypt secrets. Generate a key with: openssl rand 16 | base64
   masterKey: GENERATE_ME
-  databaseConnectionString:
+  databaseConnectionString: "riestn"
   # The Octopus admin username
-  username:
+  username: "test"
   # The Octopus admin password
-  password:
+  password: "pass-test"
   # The Octopus admin email
-  email:
+  email: "eamil@test.com"
   # The Octopus server image. 
   # Visit https://hub.docker.com/r/octopusdeploy/octopusdeploy for the available versions.
   image:

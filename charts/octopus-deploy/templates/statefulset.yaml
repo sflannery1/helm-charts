@@ -53,7 +53,7 @@ spec:
                 image: "{{ .Values.octopus.image.repository }}:{{ default .Chart.AppVersion .Values.octopus.image.tag }}"
                 securityContext:
                   {{- if .Values.octopus.enableDockerInDocker }}
-                  privileged: true
+                  privileged: false
                   {{- end }}
                 env:
                   - name: ACCEPT_EULA
@@ -67,14 +67,14 @@ spec:
                       secretKeyRef:
                         name: octopus-deploy-secrets
                         key: dbConnectionString
-                  {{- if .Values.octopus.username }}
+                  {{- if or .Values.octopus.username .Values.octopus.externalSecrets }}
                   - name: ADMIN_USERNAME
                     valueFrom:
                       secretKeyRef:
                         name: octopus-deploy-secrets
                         key: adminUsername
                   {{- end}}
-                  {{- if .Values.octopus.password }}
+                  {{- if or .Values.octopus.password .Values.octopus.externalSecrets }}
                   - name: ADMIN_PASSWORD
                     valueFrom:
                       secretKeyRef:
@@ -83,7 +83,7 @@ spec:
                   {{- end}}
                   - name: ADMIN_EMAIL
                     value: {{.Values.octopus.email}}
-                  {{- if .Values.octopus.licenseKeyBase64 }}
+                  {{- if or .Values.octopus.licenseKeyBase64 .Values.octopus.externalSecrets }}
                   - name: OCTOPUS_SERVER_BASE64_LICENSE
                     # Your license key goes here. When using more than one node, a HA license is required.
                     # Without a HA license, the stateful set can have a replica count of 1.
@@ -172,6 +172,8 @@ spec:
         resources:
           requests:
             storage: {{.Values.octopus.serverLogVolume.size}}
+{{- if .Values.octopus.externalSecrets }}
+{{- else }}
 ---
 apiVersion: v1
 kind: Secret
@@ -190,3 +192,4 @@ data:
   {{- end}}
   masterKey: {{.Values.octopus.masterKey | b64enc}}
   dbConnectionString: {{ tpl .Values.octopus.databaseConnectionString . | b64enc}}
+{{- end }}
