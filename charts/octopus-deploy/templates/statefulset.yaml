@@ -53,7 +53,7 @@ spec:
                 image: "{{ .Values.octopus.image.repository }}:{{ default .Chart.AppVersion .Values.octopus.image.tag }}"
                 securityContext:
                   {{- if .Values.octopus.enableDockerInDocker }}
-                  privileged: false
+                  privileged: true
                   {{- end }}
                 env:
                   - name: ACCEPT_EULA
