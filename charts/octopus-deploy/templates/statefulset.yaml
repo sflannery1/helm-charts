@@ -172,8 +172,7 @@ spec:
         resources:
           requests:
             storage: {{.Values.octopus.serverLogVolume.size}}
-{{- if .Values.octopus.externalSecrets }}
-{{- else }}
+{{ if not (.Values.octopus.externalSecrets) }}
 ---
 apiVersion: v1
 kind: Secret
